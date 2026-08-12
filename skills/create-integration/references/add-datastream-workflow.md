@@ -227,9 +227,10 @@ Ensure subagents receive this instruction: all fixture data, mock API responses,
 - Always use `elastic-package create data-stream` for scaffolding. Never fabricate stream directories manually.
 - Treat all scaffold output as placeholders only. A passing scaffold validation does not mean the data stream implementation is complete.
 - Treat package-level and data stream `manifest.yml` as placeholders until aligned with implemented templates and requirements.
-- **`format_version`, `conditions.kibana.version`, and ECS reference — match existing package versions, do not bump unconditionally:**
-  - **New package:** always use `format_version: "3.4.2"`, `conditions.kibana.version: "^8.19.0 || ^9.1.0"`, and `_dev/build/build.yml` ECS reference `git@v9.3.0`.
-  - **Adding to an existing shipped package:** match the package's current `format_version`, `conditions.kibana.version`, and `_dev/build/build.yml` ECS reference. Only bump if the new stream requires a feature or field unavailable in the current versions (check `package-spec/references/format-version-features.md`). Bumping unconditionally inflates the diff beyond the feature being added. If you do bump, call it out explicitly in the changelog entry. See the `package-spec` skill for the minimum-version principle.
+- **`format_version`, `conditions.kibana.version`, and ECS reference — set to the minimum that supports the package's features:**
+  - **New package / default:** use `format_version: "3.4.2"`, `conditions.kibana.version: "^8.19.0 || ^9.1.0"`, and `_dev/build/build.yml` ECS reference `git@v9.3.0`.
+  - **Federated Identity / `provider_permissions`:** use `format_version: "3.6.4"` and set both `conditions.kibana.version: "^9.4.0"` and `conditions.agent.version: "^9.4.0"` instead (see `input-configurations` -> `references/federated-identity-aws.md`).
+  - **Adding to an existing shipped package:** match the package's current `format_version`, `conditions.kibana.version`, and `_dev/build/build.yml` ECS reference. Only bump if the new stream requires a feature or field unavailable in the current versions (check `package-spec/references/format-version-features.md`). Bumping unconditionally inflates the diff beyond the feature being added. If you do bump, call it out explicitly in the changelog entry.
   - These settings belong only in the root manifest, not in data stream manifests.
 - For CEL streams, remove all unused manifest vars (package-level and data stream-level). If a var is not used in `cel.yml.hbs`, remove it.
 - Run from inside the target package directory (`packages/<name>/`).
